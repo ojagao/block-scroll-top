@@ -59,8 +59,6 @@ setTimeout(() => {
   background-image: url(@/assets/images/mountain-sea.png);
   background-size: cover;
   position: absolute;
-  max-width: 500px;
-  max-height: 500px;
 }
 img {
   width: 100%;
