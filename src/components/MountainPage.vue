@@ -48,6 +48,8 @@ setTimeout(() => {
   background-image: url(@/assets/images/mountain.png);
   background-size: cover;
   position: absolute;
+  max-width: 500px;
+  max-height: 500px;
 }
 
 #to-back {

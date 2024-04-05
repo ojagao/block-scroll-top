@@ -9,7 +9,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'TopPage',
     component: TopPage,
-    meta: { title: '世界旅行' }
+    meta: { title: '旅行' }
   },
   {
     path: '/mountain',

@@ -5,7 +5,7 @@ import App from './App.vue'
 import router from '@/router/index'
 
 router.beforeEach((to, _, next) => {
-  document.title = (to.meta.title as string) || '世界旅行'
+  document.title = (to.meta.title as string) || '旅行'
   next()
 })
 
