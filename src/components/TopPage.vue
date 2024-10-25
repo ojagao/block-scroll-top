@@ -1,79 +1,88 @@
 <script setup lang="ts">
-import toMountainButton from "@/assets/images/arrow1.png";
-import toSeaButton from "@/assets/images/arrow2.png";
+import router from "@/router";
+import { ref } from "vue";
 
-function setElementSizeBasedOnViewport() {
-  const frame = document.getElementById("frame");
-  const mountainArrow = document.getElementById("to-mountain");
-  const seaArrow = document.getElementById("to-sea");
+const name = ref("");
+const email = ref("");
+const gender = ref("");
+const submitted = ref(false);
+const valid = ref(false);
 
-  if (frame && mountainArrow && seaArrow) {
-    if (window.innerWidth > window.innerHeight) {
-      // 横幅の方が大きい場合
-      frame.style.height = "100vh";
-      frame.style.width = "100vh";
-      frame.style.top = "0";
-      frame.style.left = "calc(50vw - 50vh)";
-      mountainArrow.style.top = "8vh";
-      mountainArrow.style.left = "61vh";
-      mountainArrow.style.width = "15vh";
-      seaArrow.style.top = "75vh";
-      seaArrow.style.left = "26vh";
-      seaArrow.style.width = "15vh";
-    } else {
-      // 縦幅の方が大きい場合
-      frame.style.height = "100vw";
-      frame.style.width = "100vw";
-      frame.style.top = "calc(50vh - 50vw)";
-      frame.style.left = "0";
-      mountainArrow.style.top = "8vw";
-      mountainArrow.style.left = "61vw";
-      mountainArrow.style.width = "15vw";
-      seaArrow.style.top = "75vw";
-      seaArrow.style.left = "26vw";
-      seaArrow.style.width = "15vw";
-    }
-  }
-}
+const rules = {
+  required: (value: string) => !!value || "Required.",
+  email: (value: string) => /.+@.+\..+/.test(value) || "E-mail must be valid.",
+};
 
-window.addEventListener("resize", setElementSizeBasedOnViewport);
+const handleSubmit = () => {
+  console.log("Name:", name.value);
+  console.log("Email:", email.value);
+  console.log("Gender:", gender.value);
+  submitted.value = true;
+};
 
-setTimeout(() => {
-  setElementSizeBasedOnViewport();
-}, 50);
+const goToStopScroll = () => {
+  router.push("/stop-scroll");
+};
 </script>
 
 <template>
-  <div id="frame" class="bg-img">
-    <router-link id="to-mountain" to="/mountain">
-      <img :src="toMountainButton" alt="mountain" />
-    </router-link>
-    <router-link id="to-sea" to="/sea">
-      <img :src="toSeaButton" alt="sea" />
-    </router-link>
-  </div>
+  <v-container class="form-container" max-width="600">
+    <h4>上側にスクロールでリロードできるページ</h4>
+    <v-form @submit.prevent="handleSubmit" v-model="valid">
+      <!-- Name -->
+      <v-text-field v-model="name" label="Name" :rules="[rules.required]" required></v-text-field>
+
+      <!-- Email -->
+      <v-text-field v-model="email" label="Email" :rules="[rules.required]" required></v-text-field>
+
+      <!-- Gender -->
+      <v-radio-group v-model="gender" label="Gender" :rules="[rules.required]" row>
+        <v-radio label="Male" value="male"></v-radio>
+        <v-radio label="Female" value="female"></v-radio>
+        <v-radio label="Other" value="other"></v-radio>
+      </v-radio-group>
+
+      <!-- Age -->
+      <v-text-field v-model="age" label="Age" type="number" :rules="[rules.required, rules.numeric]" required></v-text-field>
+
+      <!-- Occupation -->
+      <v-text-field v-model="occupation" label="Occupation" :rules="[rules.required]" required></v-text-field>
+
+      <!-- Address -->
+      <v-text-field v-model="address" label="Address" :rules="[rules.required]" required></v-text-field>
+
+      <!-- Phone Number -->
+      <v-text-field v-model="phone" label="Phone Number" type="tel" :rules="[rules.required, rules.phone]" required></v-text-field>
+
+      <!-- Submit Button -->
+      <v-btn type="submit" color="primary" @click="goToStopScroll">次へ</v-btn>
+    </v-form>
+
+    <!-- Submitted Data -->
+    <v-alert v-if="submitted" type="success" class="mt-4">
+      <h3>Submitted Data</h3>
+      <p>Name: {{ name }}</p>
+      <p>Email: {{ email }}</p>
+      <p>Gender: {{ gender }}</p>
+      <p>Age: {{ age }}</p>
+      <p>Occupation: {{ occupation }}</p>
+      <p>Address: {{ address }}</p>
+      <p>Phone: {{ phone }}</p>
+    </v-alert>
+  </v-container>
 </template>
 
 <style scoped>
-.bg-img {
-  background-image: url(@/assets/images/mountain-sea.png);
-  background-size: cover;
-  position: absolute;
+.form-container {
+  margin-top: 20px;
 }
-img {
-  width: 100%;
+
+.mr-2 {
+  margin-right: 12px;
 }
-#to-mountain,
-#to-sea {
-  position: absolute;
-  z-index: 1;
-  display: block;
-  opacity: 0.3;
-}
-#to-mountain:hover,
-#to-sea:hover {
-  transform: scale(1.2);
-  opacity: 1;
-  transition: 0.3s;
+
+h4 {
+  margin-bottom: 24px;
+  border-bottom: 1px solid black;
 }
 </style>

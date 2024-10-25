@@ -1,64 +1,105 @@
 <script setup lang="ts">
-import BackButton from "@/assets/images/arrow2.png";
+import router from "@/router";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 
-function setElementSizeBasedOnViewport() {
-  const frame = document.getElementById("frame");
-  const BackArrow = document.getElementById("to-back");
+const name = ref("");
+const email = ref("");
+const gender = ref("");
+const submitted = ref(false);
+const valid = ref(false);
 
-  if (frame && BackArrow) {
-    if (window.innerWidth > window.innerHeight) {
-      // 横幅の方が大きい場合
-      frame.style.height = "100vh";
-      frame.style.width = "100vh";
-      frame.style.top = "0";
-      frame.style.left = "calc(50vw - 50vh)";
-      BackArrow.style.top = "58vh";
-      BackArrow.style.left = "5vh";
-      BackArrow.style.width = "15vh";
-    } else {
-      // 縦幅の方が大きい場合
-      frame.style.height = "100vw";
-      frame.style.width = "100vw";
-      frame.style.top = "calc(50vh - 50vw)";
-      frame.style.left = "0";
-      BackArrow.style.top = "58vw";
-      BackArrow.style.left = "5vw";
-      BackArrow.style.width = "15vw";
-    }
+const rules = {
+  required: (value: string) => !!value || "Required.",
+  email: (value: string) => /.+@.+\..+/.test(value) || "E-mail must be valid.",
+};
+
+const handleSubmit = () => {
+  console.log("Name:", name.value);
+  console.log("Email:", email.value);
+  console.log("Gender:", gender.value);
+  submitted.value = true;
+};
+
+const goToStopScroll = () => {
+  router.push("/");
+};
+
+onMounted(() => {
+  window.addEventListener("scroll", handleScroll);
+  // scrollイベントだけだと検知しきれない場合が非常に多い為requestAnimationFrameを使用
+  handleScroll();
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", handleScroll);
+  console.log("unMount")
+});
+
+// スクロール量を監視し、overscroll-behaviorを切り替える関数
+const handleScroll = () => {
+  if (document.documentElement.scrollTop <= 20) {
+    document.documentElement.style.overscrollBehavior = "none";
+  } else {
+    document.documentElement.style.overscrollBehavior = "auto";
   }
-}
-
-window.addEventListener("resize", setElementSizeBasedOnViewport);
-
-setTimeout(() => {
-  setElementSizeBasedOnViewport();
-}, 5);
+};
 </script>
 
 <template>
-  <div id="frame" class="mountain">
-    <router-link id="to-back" to="/">
-      <img :src="BackButton" alt="back" />
-    </router-link>
-  </div>
+  <v-container class="form-container" max-width="600">
+    <h4>上側にスクロールしてもリロードできないページ</h4>
+    <v-form @submit.prevent="handleSubmit" v-model="valid">
+      <!-- Name -->
+      <v-text-field v-model="name" label="Name" :rules="[rules.required]" required></v-text-field>
+
+      <!-- Email -->
+      <v-text-field v-model="email" label="Email" :rules="[rules.required]" required></v-text-field>
+
+      <!-- Gender -->
+      <v-radio-group v-model="gender" label="Gender" :rules="[rules.required]" row>
+        <v-radio label="Male" value="male"></v-radio>
+        <v-radio label="Female" value="female"></v-radio>
+        <v-radio label="Other" value="other"></v-radio>
+      </v-radio-group>
+
+      <!-- Age -->
+      <v-text-field v-model="age" label="Age" type="number" :rules="[rules.required, rules.numeric]" required></v-text-field>
+
+      <!-- Occupation -->
+      <v-text-field v-model="occupation" label="Occupation" :rules="[rules.required]" required></v-text-field>
+
+      <!-- Address -->
+      <v-text-field v-model="address" label="Address" :rules="[rules.required]" required></v-text-field>
+
+      <!-- Phone Number -->
+      <v-text-field v-model="phone" label="Phone Number" type="tel" :rules="[rules.required, rules.phone]" required></v-text-field>
+
+      <!-- Submit Button -->
+      <v-btn class="mr-3" type="submit" color="teal-darken-2" @click="goToStopScroll">戻る</v-btn>
+      <v-btn type="submit" color="primary" :disabled="!valid">登録</v-btn>
+    </v-form>
+
+    <!-- Submitted Data -->
+    <v-alert v-if="submitted" type="success" class="mt-4">
+      <h3>Submitted Data</h3>
+      <p>Name: {{ name }}</p>
+      <p>Email: {{ email }}</p>
+      <p>Gender: {{ gender }}</p>
+      <p>Age: {{ age }}</p>
+      <p>Occupation: {{ occupation }}</p>
+      <p>Address: {{ address }}</p>
+      <p>Phone: {{ phone }}</p>
+    </v-alert>
+  </v-container>
 </template>
 
 <style scoped>
-.mountain {
-  background-image: url(@/assets/images/mountain.png);
-  background-size: cover;
-  position: absolute;
+.form-container {
+  margin-top: 20px;
 }
 
-#to-back {
-  position: absolute;
-  z-index: 1;
-  display: block;
-  opacity: 0.6;
-}
-#to-back:hover {
-  transform: scale(1.2);
-  opacity: 1;
-  transition: 0.3s;
+h4 {
+  margin-bottom: 24px;
+  border-bottom: 1px solid black;
 }
 </style>

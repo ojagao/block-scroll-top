@@ -2,32 +2,32 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import TopPage from '@/components/TopPage.vue'
 import MountainPage from '@/components/MountainPage.vue'
-import SeaPage from '@/components/SeaPage.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'TopPage',
     component: TopPage,
-    meta: { title: '旅行' }
+    meta: { title: 'リロード可能' }
   },
   {
-    path: '/mountain',
+    path: '/stop-scroll',
     name: 'mountain',
     component: MountainPage,
-    meta: { title: '山' }
+    meta: { title: 'リロード不可' }
   },
-  {
-    path: '/sea',
-    name: 'sea',
-    component: SeaPage,
-    meta: { title: '海' }
-  }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
+  scrollBehavior(_to, _from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  },
 })
 
 export default router

@@ -1,13 +1,12 @@
-import '@/style.css'
-
 import { createApp } from 'vue'
 import App from './App.vue'
-import router from '@/router/index'
+import router from './router'
+import vuetify from './plugins/vuetify'
+import { loadFonts } from './plugins/webfontloader'
 
-router.beforeEach((to, _, next) => {
-  document.title = (to.meta.title as string) || '旅行'
-  next()
-})
+loadFonts()
 
-
-createApp(App).use(router).mount('#app')
+createApp(App)
+  .use(router)
+  .use(vuetify)
+  .mount('#app')
