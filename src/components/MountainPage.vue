@@ -28,6 +28,10 @@ onMounted(() => {
   window.addEventListener("scroll", handleScroll);
   // scrollイベントだけだと検知しきれない場合が非常に多い為requestAnimationFrameを使用
   handleScroll();
+
+  setInterval(() => {
+    handleScroll();
+  }, 10)
 });
 
 onBeforeUnmount(() => {
