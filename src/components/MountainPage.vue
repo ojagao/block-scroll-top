@@ -24,19 +24,30 @@ const goToStopScroll = () => {
   router.push("/");
 };
 
+let intervalId: number | null = null;
+
 onMounted(() => {
   window.addEventListener("scroll", handleScroll);
+
   // scrollイベントだけだと検知しきれない場合が非常に多い為requestAnimationFrameを使用
   handleScroll();
 
-  setInterval(() => {
+  // setIntervalの戻り値を保存
+  intervalId = window.setInterval(() => {
     handleScroll();
-  }, 10)
+  }, 10);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", handleScroll);
-  console.log("unMount")
+
+  // setIntervalをクリア
+  if (intervalId !== null) {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+
+  document.documentElement.style.overscrollBehavior = "auto";
 });
 
 // スクロール量を監視し、overscroll-behaviorを切り替える関数
